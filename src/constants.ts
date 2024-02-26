@@ -12,3 +12,16 @@ export const TYPES = {
   TURN: "turn",
   FINISH: "finish",
 };
+
+export const SHIP_TYPES = {
+  SINGLE_DECK: "single-deck",
+  TWO_DECK: "two-deck",
+  THREE_DECK: "three-deck",
+  FOUR_DECK: "four-deck",
+};
+
+export const ACTION_TYPES = {
+  KILLED: "killed",
+  HIT: "hit",
+  MISSED: "missed",
+};
