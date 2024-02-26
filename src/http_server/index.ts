@@ -1,20 +1,18 @@
-import fs from "node:fs";
-import path from "node:path";
-import http from "node:http";
+import * as fs from "fs";
+import * as path from "path";
+import * as http from "http";
 
-export const httpServer = http.createServer(function (request, response) {
+export const httpServer = http.createServer(function (req, res) {
   const __dirname = path.resolve(path.dirname(""));
   const file_path =
-    __dirname +
-    (request.url === "/" ? "/front/index.html" : "/front" + request.url);
-
+    __dirname + (req.url === "/" ? "/front/index.html" : "/front" + req.url);
   fs.readFile(file_path, function (err, data) {
     if (err) {
-      response.writeHead(404);
-      response.end(JSON.stringify(err));
+      res.writeHead(404);
+      res.end(JSON.stringify(err));
       return;
     }
-    response.writeHead(200);
-    response.end(data);
+    res.writeHead(200);
+    res.end(data);
   });
 });

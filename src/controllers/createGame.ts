@@ -1,8 +1,10 @@
-import { WS_PLAYERS, GAMES } from '../store/index.js';
-import { TYPES } from '../constants.js';
+import { WS_PLAYERS, GAMES } from "../store/index.js";
+import { TYPES } from "../constants.js";
 
 export const createGame = (idGame: number) => {
-  const game = GAMES.find((game) => game.idGame === idGame && game.players.length === 2);
+  const game = GAMES.find(
+    (game) => game.idGame === idGame && game.players.length === 2
+  );
 
   if (game) {
     game.players.forEach((player) => {
