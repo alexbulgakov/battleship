@@ -1,38 +1,20 @@
-import { WebSocket, RawData } from "ws";
+import { WS_PLAYERS, GAMES } from '../store/index.js';
+import { TYPES } from '../constants.js';
 
-import { TYPES } from "../constants";
+export const createGame = (idGame: number) => {
+  const game = GAMES.find((game) => game.idGame === idGame && game.players.length === 2);
 
-export class Create {
-  public ws: WebSocket;
+  if (game) {
+    game.players.forEach((player) => {
+      const webSocket = WS_PLAYERS.get(player.idPlayer)!;
 
-  public connection = (ws: WebSocket): void => {
-    this.ws = ws;
+      const response = JSON.stringify({
+        type: TYPES.CREATE_GAME,
+        data: JSON.stringify({ idGame, idPlayer: player.idPlayer }),
+        id: 0,
+      });
 
-    ws.on("message", this.message);
-
-    ws.on("error", (err) => {
-      console.log(err);
+      webSocket.send(response);
     });
-
-    ws.send("Websocket server ready");
-  };
-
-  private message = (data: RawData): void => {
-    const parsedData = JSON.parse(data.toString());
-
-    const newData = JSON.stringify({
-      name: parsedData.name,
-      index: 0,
-      error: false,
-      errorText: "",
-    });
-
-    const messageData = {
-      type: TYPES.REG,
-      data: newData,
-      id: 0,
-    };
-
-    this.ws.send(JSON.stringify(messageData));
-  };
-}
+  }
+};
