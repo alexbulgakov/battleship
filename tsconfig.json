@@ -1,17 +1,32 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "lib": ["ES2018"],
-    "module": "NodeNext",
-    "rootDir": "./",
-    "allowJs": true,
-    "outDir": "./dist",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "removeComments": true,
+    "target": "ES2018",
+    "lib": ["esnext"],
+    "module": "ESNext",
+    "rootDir": "./src",
+    "outDir": "./build",
+    "moduleResolution": "node",
+    "noUncheckedIndexedAccess": true,
     "strict": true,
-    "skipLibCheck": true
+    "strictNullChecks": true,
+    "removeComments": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": false,
+    "noEmitOnError": true,
+    "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "strictPropertyInitialization": false,
+    "sourceMap": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node-modules"]
+  "exclude": ["node_modules"],
+  "ts-node": {
+    "esm": true
+  }
 }
