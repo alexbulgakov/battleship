@@ -1,64 +1,24 @@
-import { createWebSocketStream, WebSocket, WebSocketServer } from "ws";
-import { IncomingMessage } from "http";
-import { Duplex } from "stream";
-import { config } from "dotenv";
+import { WebSocketServer, WebSocket } from "ws";
+import "dotenv/config";
 
-config();
+import { handler } from "../handler.js";
 
-const WEB_SOCKET_PORT = process.env.WEB_SOCKET_PORT || 4000;
-const INTERVAL_TIME = process.env.INTERVAL_TIME || 1000;
+import { WS_PLAYERS } from "../store/index.js";
 
-export const webss: WebSocketServer = new WebSocketServer({
-  port: WEB_SOCKET_PORT,
-});
+const PORT = Number(process.env.WEB_SOCKET_PORT) || 3000;
+let amountOfId: number = 0;
 
-const ping = (): void => {
-  webss.clients.forEach((ws: WebSocket & { isAlive?: boolean }) => {
-    if (!ws.isAlive) {
-      return ws.terminate();
-    }
+export const wss = new WebSocketServer({ port: PORT });
 
-    ws.isAlive = false;
-    ws.ping();
-  });
-};
+wss.on("connection", (webSocket: WebSocket) => {
+  const idPlayer = amountOfId++;
+  WS_PLAYERS.set(idPlayer, webSocket);
 
-const readDuplexStream = (duplexStreamData: Duplex) => {
-  return async () => {
-    for await (let data of duplexStreamData) {
-      console.log(data);
-    }
-  };
-};
-
-const interval = setInterval(ping, INTERVAL_TIME);
-
-webss.on("connection", async (webSocket, request: IncomingMessage) => {
-  if (!webSocket) {
-    return;
-  }
-
-  console.log("Web socket server connection successful!");
-  const duplexStream = createWebSocketStream(webSocket, {
-    encoding: "utf-8",
-    decodeStrings: false,
-  }).setMaxListeners(0);
-
-  //@ts-ignore
-  webSocket.isAlive = true;
-
-  webSocket.on("close", () => {
-    duplexStream.destroy();
+  webSocket.on("message", async (data: Buffer) => {
+    await handler(idPlayer, data);
   });
 
-  webSocket.on("pong", () => {
-    //@ts-ignore
-    webSocket.isAlive = true;
+  webSocket.on("error", (e) => {
+    console.log(e);
   });
-
-  duplexStream.on("readable", readDuplexStream(duplexStream));
-});
-
-webss.on("close", () => {
-  clearInterval(interval);
 });
